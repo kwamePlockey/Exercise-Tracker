@@ -19,7 +19,10 @@ app.post("/api/users", async (req, res)=> {
   try {
     const nameUser = req.body.name
     const userData = await User.create({username: nameUser})
-    res.status(200).json(userData)
+    res.status(200).json({
+      username: userData.username,
+      _id: userData._id
+    })
 
   } catch (error) {
     res.status(500).send(error.message)
@@ -43,7 +46,7 @@ app.get("/api/users", async (req, res)=> {
 //POST request for logging exercise routine
 app.post("/api/users/:_id/exercises", async (req, res) => {
   try {
-    const userId = req.params["_id"]
+    const userId = req.body["_id"]
     
     // finding username given id
     const userData = await User.findById(userId);
@@ -61,9 +64,8 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
     const descpt = req.body.description;
     const durat = req.body.duration;
     let date = req.body.date;
-    if(date == ""){
-      date = Exercise.date;
-    }
+    if(date == "") date = Exercise.date;
+    
 
      const ExerciseLog =  await Exercise.create({
       username: username,
