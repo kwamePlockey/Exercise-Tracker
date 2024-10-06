@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 // POST request for creating  new Users
 app.post("/api/users", async (req, res)=> {
   try {
-    const nameUser = req.body.name
+    const nameUser = req.body.username
     const userData = await User.create({username: nameUser})
     res.status(200).json({
       username: userData.username,
@@ -46,10 +46,12 @@ app.get("/api/users", async (req, res)=> {
 //POST request for logging exercise routine
 app.post("/api/users/:_id/exercises", async (req, res) => {
   try {
-    const userId = req.body["_id"]
+    const userId = req.body[":_id"];
+    const id = req.params._id;
     
+
     // finding username given id
-    const userData = await User.findById(userId);
+    const userData = await User.findById(id);
 
     // Error handling for wrong user input
     if(!userData){
@@ -61,18 +63,17 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
 
     // Retrieving user info from POST req 
-    const descpt = req.body.description;
-    const durat = req.body.duration;
+    const {duration, description} = req.body;
     let date = req.body.date;
-    if(date == "") date = Exercise.date;
+
     
 
      const ExerciseLog =  await Exercise.create({
       username: username,
-      duration: durat,
-      description: descpt,
-      date: date,
-      userId: userId
+      duration: duration,
+      description: description,
+      date: date? new Date(date) : Date.now(),
+      userId: id
     })
 
     res.status(200).json({
@@ -90,6 +91,7 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 })
 
 //GET request to /api/users/:_id/logs to retrieve Exercise logs of a user
+
 app.get("/api/users/:_id/logs", async (req, res) =>{
   try {
     const userId = req.params._id;
@@ -131,8 +133,8 @@ app.get("/api/users/:_id/logs", async (req, res) =>{
     })
 
   } catch (error) {
-    res.status(500).json(error.message);
-    console.log(error.message)
+    res.status(500).json(error);
+    console.log(error)
   }
 })
 
@@ -141,10 +143,10 @@ app.get("/api/users/:_id/logs", async (req, res) =>{
 //Server Setup
 const runServer = async () => {
   try {
-    const dB = await mongoose.connect(process.env.Mongoose)
+    const dB = await mongoose.connect('mongodb+srv://peekay:cKN7zkx6cP4RNZz7@cluster0.ucnq8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
     console.log("Connected to dB")
 
-    app.listen(process.env.PORT , () => {
+    app.listen(3000, () => {
     console.log("Server is fired up 🔥")
   })
   } catch (error) {

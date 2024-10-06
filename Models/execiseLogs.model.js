@@ -17,7 +17,6 @@ const exerciseRoutineSchema = mongoose.Schema(
         },
         date: {
             type: Date,
-            default: Date.now,
             required: false
         },
         userId: {
