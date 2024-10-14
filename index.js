@@ -143,7 +143,7 @@ app.get("/api/users/:_id/logs", async (req, res) =>{
 //Server Setup
 const runServer = async () => {
   try {
-    const dB = await mongoose.connect('mongodb+srv://peekay:cKN7zkx6cP4RNZz7@cluster0.ucnq8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+    const dB = await mongoose.connect(process.env.MONGODB_URI)
     console.log("Connected to dB")
 
     app.listen(3000, () => {
